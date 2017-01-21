@@ -69,32 +69,3 @@ setTimeout(() => {
 })
 
 context.add(content)
-
-
-
-
-// import App from 'ampersand-app'
-// import Backendless from 'backendless'
-// import 'monguitodb'
-//
-// import page from './pages/startPage'
-//
-// const APP_ID = '95BB7CFC-21DE-A9C7-FFE7-E6ED93EEA300'
-// const SECRET_KEY = '27C1BD9A-321C-1751-FF79-171FD5910500'
-// Backendless.initApp( APP_ID, SECRET_KEY, 'v1' )
-// Backendless.enablePromises()
-//
-// App.extend({
-//   init: function () {
-//     tabris.ui.set({
-//       statusBarTheme: 'dark',
-//       background: '#3a3f4c',
-//       toolbarVisible: false
-//     })
-//
-//     this.db =  new MonguitoDB(localStorage, 'orders')
-//     page.open()
-//   }
-// })
-//
-// App.init()

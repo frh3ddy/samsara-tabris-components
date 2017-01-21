@@ -5,6 +5,7 @@ const { Transitionable, Transform, View } = Core
 const { SequentialLayout } = Layouts
 
 import app from 'ampersand-app'
+import EditModal from './EditModal'
 
 export default View.extend({
     defaults: {
@@ -108,24 +109,15 @@ export default View.extend({
 
         editSurface.on('deploy', (target) => {
           target.on('tap', () => {
-            const surf = new Surface({
-                size: [200, 200],
-                origin: [.5, .5],
-                content: new TextInput({
-                    message: 'say something ',
-                    left: '10%',
-                    right: '10%',
-                    centerY: 0,
-                }),
-                properties: {
-                    background: 'green'
-                }
-            })
-
-            app.context.add({align: [.5, .2]}).add(surf)
-
             const price = repairPriceSurface.getContent().get('text')
-            this.emit('priceChanged', {prevPrice: parseInt(price), newPrice: 100})
+
+            this.emit('openModal', price)
+
+            // modal.on('done', newPrice => {
+            //     this.emit('priceChanged', {prevPrice: parseInt(price), newPrice: newPrice})
+            //     modal.remove()
+            // })
+
           })
         })
 

@@ -7,6 +7,7 @@ import HeaderTitle from './HeaderTitle'
 import InfoRow from './InfoRow'
 import PriceRow from './PriceRow'
 import TotalCost from './TotalCost'
+import EditModal from './EditModal'
 
 export default View.extend({
     initialize({headerTitle, data}) {
@@ -68,6 +69,14 @@ export default View.extend({
                         container.unlink(price).remove()
                     })
 
+                    price.on('openModal', payload => {
+                        if(this.modal) {
+                            this.modal.show()
+                        } else {
+                            this.initModal()
+                        }
+                    })
+
                     price.on('priceChanged', (payload) => {
                         this.emit('priceChanged', payload)
                     })
@@ -106,6 +115,7 @@ export default View.extend({
 
         this.add(background)
         this.add(container)
+
     },
     update(data) {
         this.container.unlink(3).remove()
@@ -115,5 +125,8 @@ export default View.extend({
         })
 
         this.container.insertAfter(2, row)
+    },
+    initModal() {
+        this.modal = new EditModal()
     }
 })
