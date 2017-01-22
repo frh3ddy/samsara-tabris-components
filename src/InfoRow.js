@@ -9,7 +9,8 @@ export default View.extend({
       borderTop: false
     },
     events:{
-        update: 'onUpdate'
+        update: 'onUpdate',
+        editing: 'onEditing'
     },
     initialize({labelTitle, text, borderTop, action}) {
         let isEditing = false
@@ -118,5 +119,8 @@ export default View.extend({
         const textView = this.text.getContent()
         textView.set('text', content)
         // textView.parent().set('height', null)
+    },
+    onEditing() {
+
     }
 })

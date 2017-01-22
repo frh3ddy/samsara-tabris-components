@@ -11,6 +11,8 @@ import EditModal from './EditModal'
 
 export default View.extend({
     initialize({headerTitle, data}) {
+        let editNumber = 0
+        let priceView
         let cacheHeight
         const container = new SequentialLayout({
             direction: 1
@@ -67,14 +69,19 @@ export default View.extend({
 
                     price.on('delete', () => {
                         container.unlink(price).remove()
+                        editNumber -= 1
+                        if(editNumber <= 0) {
+                            console.log('done')
+                        }
+                    })
+
+                    price.on('editing', () => {
+                        editNumber += 1
                     })
 
                     price.on('openModal', payload => {
-                        if(this.modal) {
-                            this.modal.show()
-                        } else {
-                            this.initModal()
-                        }
+                        this.modal.show(payload)
+                        priceView = payload.view
                     })
 
                     price.on('priceChanged', (payload) => {
@@ -83,10 +90,12 @@ export default View.extend({
 
                     row.on('edit', () => {
                         price.trigger('edit')
+                        editNumber += 1
                     })
 
                     row.on('done', () => {
                         price.trigger('done')
+                        editNumber -= 1
                     })
 
                     container.push(price)
@@ -97,6 +106,8 @@ export default View.extend({
                         size: [undefined, 60],
                         price: totalCost
                     })
+
+                    this.totalRepairCost = totalRepairCost
 
                     this.on('priceChanged', (payload) => {
                         totalRepairCost.trigger('priceChanged', payload)
@@ -116,6 +127,14 @@ export default View.extend({
         this.add(background)
         this.add(container)
 
+        setTimeout(() => {
+            this.modal = new EditModal()
+            this.modal.on('priceChanged', (payload) => {
+                this.totalRepairCost.trigger('priceChanged', payload)
+                priceView.trigger('setNewPrice', payload.newPrice)
+            })
+        })
+
     },
     update(data) {
         this.container.unlink(3).remove()
@@ -125,8 +144,5 @@ export default View.extend({
         })
 
         this.container.insertAfter(2, row)
-    },
-    initModal() {
-        this.modal = new EditModal()
     }
 })

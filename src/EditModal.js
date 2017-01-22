@@ -1,15 +1,18 @@
-import { Composite } from 'tabris'
+import { Composite, TextView, TextInput } from 'tabris'
 import { Widget, Core, Layouts } from 'samsara-tabris'
 const { Surface } = Widget
-const { View, Transitionable } = Core
+const { View, Transitionable, Transform } = Core
 
 import app from 'ampersand-app'
 
 export default View.extend({
     initialize({currentPrice}) {
-        const opacity = new Transitionable(.5)
-        const pos = new Transitionable([.5, .1])
-        const origin = new Transitionable([.5, 0])
+        let cachePrice
+        this.cachePrice = cachePrice
+
+        const opacity = new Transitionable(0)
+        const pos = new Transitionable([.5, 0])
+        const origin = new Transitionable([.5, 1])
 
         this.opacity = opacity
         this.pos = pos
@@ -40,28 +43,104 @@ export default View.extend({
             align: pos
         })
 
+        const actionsComposite =  new Composite({
+            left: 0,
+            right: 0,
+            height: 50,
+            background: '#282c34'
+        })
+
+        const cancelAction = new Composite({
+            top: 0,
+            bottom: 0,
+            right: '50%',
+            left: 0
+        }).on('tap', () => {
+            this.hide()
+        }).appendTo(actionsComposite)
+
+        const updateAction = new Composite({
+            top: 0,
+            bottom: 0,
+            left: '50%',
+            right: 0
+        }).on('tap', () => {
+            const price = parseInt(this.priceInput.get('text'))
+            this.emit('priceChanged', {prevPrice: this.cachePrice, newPrice: price})
+            this.hide()
+        }).appendTo(actionsComposite)
+
+        new TextView({
+            text: 'Cancel',
+            textColor: 'white',
+            centerY: 0,
+            left: 20
+        }).appendTo(cancelAction)
+
+        new TextView({
+            text: 'Update',
+            textColor: 'white',
+            alignment: 'right',
+            right: 20,
+            centerY: 0
+        }).appendTo(updateAction)
+
 
         const backgroundInputBox = new Surface({
-            content: new Composite({
-                left: 0,
-                right: 0,
-                height: 50,
-                background: '#282c34'
-            }),
+            content: actionsComposite,
             properties: {
                 background: 'white',
                 cornerRadius: 8
             }
         })
 
+        const inputComposite = new Composite({
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0
+        })
+
+        this.priceInput = new TextInput({
+            width: 100,
+            alignment: 'center',
+            centerX: 0,
+            top: 20
+        }).appendTo(inputComposite)
+
+        this.repairText = new TextView({
+            top: [this.priceInput, 20],
+            centerX: 0
+        }).appendTo(inputComposite)
+
+        const inputSurface = new Surface({
+            size: [undefined, undefined],
+            content: inputComposite
+        })
+
+        inputSurface.on('deploy', (target) => {
+            this.inputSurface = target
+        })
+
         inputBox.add(backgroundInputBox)
+        inputBox.add({transform: Transform.translateY(50)}).add(inputSurface)
 
         app.context.add(inputBox)
 
     },
-    show() {
+    show({name, price}) {
+        this.cachePrice = price
         this.opacity.set(.5, {duration: 200})
         this.pos.set([.5, .1], {curve: 'easeOut', duration: 200})
         this.origin.set([.5, 0], {curve: 'easeOut', duration: 200})
+        this.priceInput.set('text', price)
+        this.priceInput.set('focused', true)
+        this.repairText.set('text', name)
+    },
+    hide() {
+        this.opacity.set(0, {duration: 500})
+        this.pos.set([.5, 0], {curve: 'easeOut', duration: 200})
+        this.origin.set([.5, 1], {curve: 'easeOut', duration: 200})
+        this.priceInput.set('focused', false)
     }
 })

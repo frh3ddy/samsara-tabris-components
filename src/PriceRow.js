@@ -13,7 +13,8 @@ export default View.extend({
     },
     events: {
         edit: 'onEdit',
-        done: 'onDone'
+        done: 'onDone',
+        setNewPrice: 'onSetNewPrice'
     },
     initialize({repairData}) {
         const { name, price } = repairData
@@ -66,12 +67,15 @@ export default View.extend({
         })
 
         repairPriceSurface.on('deploy', target => {
+            this.priceText = repairPriceSurface.getContent()
             target.on('swipe:left', () => {
                 actionsT.set(1, {curse: 'easeIn', duration: 200})
+                this.emit('editing')
             })
 
             target.on('swipe:right', () => {
                 actionsT.set(0, {curse: 'easeOut', duration: 300})
+                this.emit('doneEditing')
             })
         })
 
@@ -111,7 +115,7 @@ export default View.extend({
           target.on('tap', () => {
             const price = repairPriceSurface.getContent().get('text')
 
-            this.emit('openModal', price)
+            this.emit('openModal', {name, price, view: this})
 
             // modal.on('done', newPrice => {
             //     this.emit('priceChanged', {prevPrice: parseInt(price), newPrice: newPrice})
@@ -170,5 +174,9 @@ export default View.extend({
     },
     onDone() {
         this.showEdit.set(0, {curse: 'easeOut', duration: 300})
+    },
+    onSetNewPrice(newPrice) {
+        this.priceText.set('text', newPrice)
+        this.onDone()
     }
 })
