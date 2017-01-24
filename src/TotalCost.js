@@ -4,6 +4,8 @@ const { Surface } = Widget
 const { Transitionable, Transform, View } = Core
 const { SequentialLayout } = Layouts
 
+import CountUp from './countup'
+
 export default View.extend({
     defaults: {
       borderBottom: false
@@ -34,14 +36,16 @@ export default View.extend({
           origin: [1, 0],
           content: new TextView({
             font: '16px bold',
-            text: price,
             textColor: '#000000',
             right: 20,
             centerY: 0
           })
         })
 
-        this.repairPriceSurface = repairPriceSurface
+        const textWidget = repairPriceSurface.getContent()
+
+        this.price = initCountUp(textWidget, price)
+        this.textWidget = textWidget
 
         priceList.add(repairTextSurface)
         priceList.add({align: [1, 0]}).add(repairPriceSurface)
@@ -66,10 +70,30 @@ export default View.extend({
         this.add({align: [0, 1]}).add(borderBottomSurface)
     },
     onPriceChanged({prevPrice, newPrice}) {
-        const repairPrice = this.repairPriceSurface.getContent()
-        let currentPrice = parseInt(repairPrice.get('text'))
+        let textPrice = this.textWidget.get('text')
 
-        currentPrice -= prevPrice
-        repairPrice.set('text', currentPrice + newPrice)
+        if (textPrice.charAt(0) === '$') {
+          textPrice = textPrice.substr(1)
+        }
+
+        let currentPrice = parseInt(textPrice) - prevPrice
+
+        this.price.update(newPrice + currentPrice)
     }
 })
+
+function initCountUp(textView, value) {
+  const options = {
+    useEasing : true,
+    useGrouping : false,
+    separator : ',',
+    decimal : '.',
+    prefix : '$',
+    suffix : ''
+  };
+
+  var numAnim = new CountUp(textView, 0, value, 0, 1.5, options)
+  numAnim.start()
+
+  return numAnim
+}

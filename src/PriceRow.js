@@ -178,5 +178,6 @@ export default View.extend({
     onSetNewPrice(newPrice) {
         this.priceText.set('text', newPrice)
         this.onDone()
+        this.emit('doneEditing')
     }
 })

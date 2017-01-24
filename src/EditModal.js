@@ -11,12 +11,14 @@ export default View.extend({
         this.cachePrice = cachePrice
 
         const opacity = new Transitionable(0)
-        const pos = new Transitionable([.5, 0])
-        const origin = new Transitionable([.5, 1])
+        const posT = new Transitionable(0)
+        const originT = new Transitionable(1)
+        const pos = posT.map(value => [.5, value])
+        const origin = originT.map(value => [.5, value])
 
         this.opacity = opacity
-        this.pos = pos
-        this.origin = origin
+        this.posT = posT
+        this.originT = originT
 
         const overlay = new Surface({
             opacity: opacity,
@@ -29,8 +31,8 @@ export default View.extend({
         overlay.on('deploy', target => {
             target.on('tap', () => {
                 opacity.set(0, {duration: 500})
-                pos.set([.5, 0], {curve: 'easeOut', duration: 200})
-                origin.set([.5, 1], {curve: 'easeOut', duration: 200})
+                posT.set(0, {curve: 'easeOut', duration: 200})
+                originT.set(1, {curve: 'easeOut', duration: 200})
             })
         })
 
@@ -105,7 +107,8 @@ export default View.extend({
             width: 100,
             alignment: 'center',
             centerX: 0,
-            top: 20
+            top: 20,
+            keyboard: 'number'
         }).appendTo(inputComposite)
 
         this.repairText = new TextView({
@@ -131,16 +134,16 @@ export default View.extend({
     show({name, price}) {
         this.cachePrice = price
         this.opacity.set(.5, {duration: 200})
-        this.pos.set([.5, .1], {curve: 'easeOut', duration: 200})
-        this.origin.set([.5, 0], {curve: 'easeOut', duration: 200})
+        this.posT.set(.1, {curve: 'spring', damping : .7, period : 100, velocity : 0})
+        this.originT.set(0, {curve: 'spring', damping : .7, period : 100, velocity : 0})
         this.priceInput.set('text', price)
         this.priceInput.set('focused', true)
         this.repairText.set('text', name)
     },
     hide() {
         this.opacity.set(0, {duration: 500})
-        this.pos.set([.5, 0], {curve: 'easeOut', duration: 200})
-        this.origin.set([.5, 1], {curve: 'easeOut', duration: 200})
+        this.posT.set(0, {curve: 'easeOut', duration: 200})
+        this.originT.set(1, {curve: 'easeOut', duration: 200})
         this.priceInput.set('focused', false)
     }
 })

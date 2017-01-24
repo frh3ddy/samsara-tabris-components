@@ -76,7 +76,17 @@ export default View.extend({
                     })
 
                     price.on('editing', () => {
+                        if(editNumber <= 0) {
+                          row.trigger('editing')
+                        }
                         editNumber += 1
+                    })
+
+                    price.on('doneEditing', () => {
+                      if(editNumber <= 1) {
+                        row.trigger('doneEditing')
+                      }
+                      editNumber -= 1
                     })
 
                     price.on('openModal', payload => {

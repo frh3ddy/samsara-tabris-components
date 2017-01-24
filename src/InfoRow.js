@@ -10,15 +10,17 @@ export default View.extend({
     },
     events:{
         update: 'onUpdate',
-        editing: 'onEditing'
+        editing: 'onEditing',
+        doneEditing: 'onDoneEditing'
     },
     initialize({labelTitle, text, borderTop, action}) {
-        let isEditing = false
         let cacheHeight
         let borderTopSurface
         let labelSurface
         let topMargin = 15
         let bottomMargin = 15
+
+        this.isEditing = false
 
         const container = new SequentialLayout({
             direction: 1
@@ -96,16 +98,18 @@ export default View.extend({
             }
           })
 
+          this.actionText = actionSurface.getContent()
+
           actionSurface.on('deploy', target => {
               target.on('tap', () => {
-                  if(isEditing) {
+                  if(this.isEditing) {
                       target.children().first().set('text', 'Edit')
                       this.emit('done')
-                      isEditing = false
+                      this.isEditing = false
                   } else {
                       target.children().first().set('text', 'Done')
                       this.emit('edit')
-                      isEditing = true
+                      this.isEditing = true
                   }
               })
           })
@@ -121,6 +125,11 @@ export default View.extend({
         // textView.parent().set('height', null)
     },
     onEditing() {
-
+      this.actionText.set('text', 'Done')
+      this.isEditing = true
+    },
+    onDoneEditing() {
+      this.actionText.set('text', 'Edit')
+      this.isEditing = false
     }
 })
