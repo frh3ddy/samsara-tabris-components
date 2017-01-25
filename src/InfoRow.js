@@ -66,7 +66,7 @@ export default View.extend({
         }
 
         const textSurface = new Surface({
-            size: [true, true],
+            size: [undefined, true],
             content: new TextView({
                 left: 8,
                 right: 0,
@@ -84,6 +84,8 @@ export default View.extend({
         if(labelTitle) container.push(labelSurface)
         container.push(textSurface)
         container.push(borderBottomSurface)
+        
+        this.add(container)
 
         if(action) {
           let actionSurface = new Surface({
@@ -116,8 +118,6 @@ export default View.extend({
 
           this.add(actionSurface)
         }
-
-        this.add(container)
     },
     onUpdate(content) {
         const textView = this.text.getContent()

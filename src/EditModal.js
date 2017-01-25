@@ -7,6 +7,12 @@ import app from 'ampersand-app'
 
 export default View.extend({
     initialize({currentPrice}) {
+        let height = 150
+
+        if (device.platform === 'Android') {
+            height = 175
+        }
+
         let cachePrice
         this.cachePrice = cachePrice
 
@@ -39,7 +45,7 @@ export default View.extend({
         app.context.add(overlay)
 
         const inputBox = app.context.add({
-            size: [undefined, 150],
+            size: [undefined, height],
             proportions: [9/10, false],
             origin: origin,
             align: pos
@@ -137,7 +143,18 @@ export default View.extend({
         this.posT.set(.1, {curve: 'spring', damping : .7, period : 100, velocity : 0})
         this.originT.set(0, {curve: 'spring', damping : .7, period : 100, velocity : 0})
         this.priceInput.set('text', price)
-        this.priceInput.set('focused', true)
+
+        //Android show keyboard, slows down the animation so it waits until a
+        //Transitionable 'end' event
+        if (device.platform === 'Android') {
+            this.posT.on('end', () => {
+                this.priceInput.set('focused', true)
+                this.posT.off('end')
+            })
+        } else {
+            this.priceInput.set('focused', true)
+        }
+
         this.repairText.set('text', name)
     },
     hide() {
