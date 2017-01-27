@@ -36,9 +36,7 @@ export default View.extend({
 
         overlay.on('deploy', target => {
             target.on('tap', () => {
-                opacity.set(0, {duration: 500})
-                posT.set(0, {curve: 'easeOut', duration: 200})
-                originT.set(1, {curve: 'easeOut', duration: 200})
+                this.hide()
             })
         })
 
@@ -123,6 +121,7 @@ export default View.extend({
         }).appendTo(inputComposite)
 
         const inputSurface = new Surface({
+            margins: [0, 25],
             size: [undefined, undefined],
             content: inputComposite
         })
@@ -144,8 +143,6 @@ export default View.extend({
         this.originT.set(0, {curve: 'spring', damping : .7, period : 100, velocity : 0})
         this.priceInput.set('text', price)
 
-        //Android show keyboard, slows down the animation so it waits until a
-        //Transitionable 'end' event
         if (device.platform === 'Android') {
             this.posT.on('end', () => {
                 this.priceInput.set('focused', true)
@@ -155,12 +152,24 @@ export default View.extend({
             this.priceInput.set('focused', true)
         }
 
+        tabris.ui.set({
+        background: '#1c1f25',
+        })
+
+
         this.repairText.set('text', name)
     },
     hide() {
-        this.opacity.set(0, {duration: 500})
+        this.opacity.set(0, {duration: 200})
         this.posT.set(0, {curve: 'easeOut', duration: 200})
         this.originT.set(1, {curve: 'easeOut', duration: 200})
         this.priceInput.set('focused', false)
+
+        this.opacity.on('end', () => {
+            tabris.ui.set({
+                background: '#3a3f4c',
+            })
+            this.opacity.off('end')
+        })
     }
 })
