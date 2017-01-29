@@ -13,25 +13,25 @@ export default View.extend({
     initialize({headerTitle, data}) {
         let editNumber = 0
         let priceView
-        let cacheHeight
         const container = new SequentialLayout({
             direction: 1
         })
 
         this.container = container
 
+        const viewSize = container.size.map(size => {
+            if (!size) return
+            return size
+        })
+
         const background = new Surface({
+          size: viewSize,
           properties: {
             background: '#ffffff'
           }
         })
 
-        container.size.on('end', size => {
-          if(size[1] !== cacheHeight){
-            this.setSize([undefined, size[1]])
-            cacheHeight = size[1]
-          }
-        })
+        this.size = viewSize
 
         const header = new HeaderTitle({
             title: headerTitle,

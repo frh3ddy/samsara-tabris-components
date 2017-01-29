@@ -14,7 +14,6 @@ export default View.extend({
         doneEditing: 'onDoneEditing'
     },
     initialize({labelTitle, text, borderTop, action}) {
-        let cacheHeight
         let borderTopSurface
         let labelSurface
         let topMargin = 15
@@ -26,11 +25,9 @@ export default View.extend({
             direction: 1
         })
 
-        container.size.on('end', size => {
-          if(size[1] !== cacheHeight){
-            this.setSize([undefined, size[1]])
-            cacheHeight = size[1]
-          }
+        this.size = container.size.map(size => {
+            if (!size) return
+            return size
         })
 
         if (borderTop) {
@@ -84,12 +81,17 @@ export default View.extend({
         if(labelTitle) container.push(labelSurface)
         container.push(textSurface)
         container.push(borderBottomSurface)
-        
+
         this.add(container)
 
         if(action) {
+          let actionSize = container.size.map(size => {
+              if (!size) return
+              return [50, size[1]]
+          })
+
           let actionSurface = new Surface({
-            size: [50, undefined],
+            size: actionSize,
             content: new TextView({
                 text: action,
                 centerY: 0,
@@ -102,18 +104,16 @@ export default View.extend({
 
           this.actionText = actionSurface.getContent()
 
-          actionSurface.on('deploy', target => {
-              target.on('tap', () => {
-                  if(this.isEditing) {
-                      target.children().first().set('text', 'Edit')
-                      this.emit('done')
-                      this.isEditing = false
-                  } else {
-                      target.children().first().set('text', 'Done')
-                      this.emit('edit')
-                      this.isEditing = true
-                  }
-              })
+          actionSurface.on('tap', () => {
+              if(this.isEditing) {
+                  actionSurface.getContent().set('text', 'Edit')
+                  this.emit('done')
+                  this.isEditing = false
+              } else {
+                  actionSurface.getContent().set('text', 'Done')
+                  this.emit('edit')
+                  this.isEditing = true
+              }
           })
 
           this.add(actionSurface)

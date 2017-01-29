@@ -34,11 +34,11 @@ export default View.extend({
             }
         })
 
-        overlay.on('deploy', target => {
-            target.on('tap', () => {
-                this.hide()
-            })
-        })
+        // overlay.on('deploy', target => {
+        //     target.on('tap', () => {
+        //         this.hide()
+        //     })
+        // })
 
         app.context.add(overlay)
 

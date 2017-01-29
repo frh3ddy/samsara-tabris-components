@@ -1,4 +1,4 @@
-import { Page, Button, CollectionView, ImageView, TextView, Composite, TextInput } from 'tabris'
+import { Page, Button, CollectionView, ImageView, TextView, ScrollView, Composite, TextInput } from 'tabris'
 import { Widget, Core, Layouts } from 'samsara-tabris'
 const { Context, Surface, ContainerSurface } = Widget
 const { Transitionable, Transform, View } = Core
@@ -19,34 +19,31 @@ const context = new Context()
 app.extend({ context })
 
 context.mount(page)
-page.open()
 
-const showT = new Transitionable(0)
+page.open()
 
 const content = new SequentialLayout({
   direction: 1,
   spacing: 20,
-  opacity: showT
-  // size: [undefined, 100]
 })
 
-// const customerInfo = new ContentSection({
-//   headerTitle: 'Customer Info',
-//   data: [
-//       { label: 'Name', text: 'Fredy' },
-//       { label: 'Phone Number', text: '732-501-7273' }
-//   ]
-// })
-//
-// const deviceInfo = new ContentSection({
-//   headerTitle: 'Device Info',
-//   data: [
-//       { label: 'Brand', text: 'Asus' },
-//       { label: 'Password', text: '7273' },
-//       { label: 'Thech Notes', text: 'The bigger, brilliant screen flows over, bringing life to everything you see. ... F1.9 female model photo ' },
-//       { label: 'Current Status', text: 'Working on it' }
-//   ]
-// })
+const customerInfo = new ContentSection({
+  headerTitle: 'Customer Info',
+  data: [
+      { label: 'Name', text: 'Fredy' },
+      { label: 'Phone Number', text: '732-501-7273' }
+  ]
+})
+
+const deviceInfo = new ContentSection({
+  headerTitle: 'Device Info',
+  data: [
+      { label: 'Brand', text: 'Asus' },
+      { label: 'Password', text: '7273' },
+      { label: 'Thech Notes', text: 'The bigger, brilliant screen flows over, bringing life to everything you see. ... F1.9 female model photo ' },
+      { label: 'Current Status', text: 'Working on it' }
+  ]
+})
 
 const orderDetails = new ContentSection({
   headerTitle: 'Order Details',
@@ -60,12 +57,15 @@ const orderDetails = new ContentSection({
   ]
 })
 
-// content.push(customerInfo)
-// content.push(deviceInfo)
+content.push(customerInfo)
+content.push(deviceInfo)
 content.push(orderDetails)
 
-setTimeout(() => {
-  showT.set(1, {curve: 'easeIn', duration: 220})
+const scrolview = new ContainerSurface({
+    // tagName: 'ScrollView',
+    size: [undefined, undefined]
 })
 
-context.add(content)
+scrolview.add(content)
+
+context.add(scrolview)
