@@ -1195,6 +1195,12 @@ homedir-polyfill@^1.0.0:
   dependencies:
     parse-passwd "^1.0.0"
 
+"https://github.com/robertleeplummerjr/thaw.js.git":
+  name thaw.js
+  version "1.2.2"
+  resolved "https://github.com/robertleeplummerjr/thaw.js.git#9f03506d3d623c9945ba41257e1cff1bff8d70bd"
+  registry bower
+
 ignore@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.2.0.tgz#8d88f03c3002a0ac52114db25d2c673b0bf1e435"

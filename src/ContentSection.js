@@ -9,6 +9,8 @@ import PriceRow from './PriceRow'
 import TotalCost from './TotalCost'
 import EditModal from './EditModal'
 
+import Thaw from "./thaw"
+
 export default View.extend({
     initialize({headerTitle, data}) {
         let editNumber = 0
@@ -137,14 +139,15 @@ export default View.extend({
         this.add(background)
         this.add(container)
 
-        setTimeout(() => {
-            this.modal = new EditModal()
-            this.modal.on('priceChanged', (payload) => {
-                this.totalRepairCost.trigger('priceChanged', payload)
-                priceView.trigger('setNewPrice', payload.newPrice)
-            })
-        })
-
+        new Thaw([
+            () => {
+              this.modal = new EditModal()
+              this.modal.on('priceChanged', (payload) => {
+                  this.totalRepairCost.trigger('priceChanged', payload)
+                  priceView.trigger('setNewPrice', payload.newPrice)
+              })
+            }
+        ])
     },
     update(data) {
         this.container.unlink(3).remove()

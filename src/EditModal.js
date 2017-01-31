@@ -49,56 +49,60 @@ export default View.extend({
             align: pos
         })
 
+        app.context.add(inputBox)
+
         const actionsComposite =  new Composite({
             left: 0,
             right: 0,
             height: 50,
             background: '#282c34'
+        }).once('resize', (composite) => {
+          const cancelAction = new Composite({
+              top: 0,
+              bottom: 0,
+              right: '50%',
+              left: 0
+          }).on('tap', () => {
+              this.hide()
+          }).appendTo(composite)
+
+          const updateAction = new Composite({
+              top: 0,
+              bottom: 0,
+              left: '50%',
+              right: 0
+          }).on('tap', () => {
+              const price = parseInt(this.priceInput.get('text'))
+              this.emit('priceChanged', {prevPrice: this.cachePrice, newPrice: price})
+              this.hide()
+          }).appendTo(composite)
+
+          new TextView({
+              text: 'Cancel',
+              textColor: 'white',
+              centerY: 0,
+              left: 20
+          }).appendTo(cancelAction)
+
+          new TextView({
+              text: 'Update',
+              textColor: 'white',
+              alignment: 'right',
+              right: 20,
+              centerY: 0
+          }).appendTo(updateAction)
         })
 
-        const cancelAction = new Composite({
-            top: 0,
-            bottom: 0,
-            right: '50%',
-            left: 0
-        }).on('tap', () => {
-            this.hide()
-        }).appendTo(actionsComposite)
-
-        const updateAction = new Composite({
-            top: 0,
-            bottom: 0,
-            left: '50%',
-            right: 0
-        }).on('tap', () => {
-            const price = parseInt(this.priceInput.get('text'))
-            this.emit('priceChanged', {prevPrice: this.cachePrice, newPrice: price})
-            this.hide()
-        }).appendTo(actionsComposite)
-
-        new TextView({
-            text: 'Cancel',
-            textColor: 'white',
-            centerY: 0,
-            left: 20
-        }).appendTo(cancelAction)
-
-        new TextView({
-            text: 'Update',
-            textColor: 'white',
-            alignment: 'right',
-            right: 20,
-            centerY: 0
-        }).appendTo(updateAction)
-
-
         const backgroundInputBox = new Surface({
+            size: [undefined, undefined],
             content: actionsComposite,
             properties: {
                 background: 'white',
                 cornerRadius: 8
             }
         })
+
+        inputBox.add(backgroundInputBox)
 
         const inputComposite = new Composite({
             left: 0,
@@ -130,10 +134,7 @@ export default View.extend({
             this.inputSurface = target
         })
 
-        inputBox.add(backgroundInputBox)
         inputBox.add({transform: Transform.translateY(50)}).add(inputSurface)
-
-        app.context.add(inputBox)
 
     },
     show({name, price}) {
