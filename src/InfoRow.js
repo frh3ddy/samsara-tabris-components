@@ -157,7 +157,7 @@ export default View.extend({
           }
 
           this.text = content
-          this.textSize.set([undefined, bounds.height + 10 ], {curve: 'easeOut', duration: 300})
+          this.textSize.set([undefined, bounds.height + 15 ], {curve: 'easeOut', duration: 300})
           w.dispose()
         }).appendTo(APP.page)
 

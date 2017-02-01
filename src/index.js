@@ -1,205 +1,57 @@
 import { Page, Button, CollectionView, ImageView, TextView, ScrollView, Composite, TextInput } from 'tabris'
-import { Widget, Core, Layouts } from 'samsara-tabris'
-const { Context, Surface, ContainerSurface } = Widget
-const { Transitionable, Transform, View } = Core
-const { FlexibleLayout, SequentialLayout } = Layouts
+import { compose, init, methods, props } from 'stampit'
 
-import Thaw from "./thaw"
-
-import app from 'ampersand-app'
-
-import ContentSection from './ContentSection'
+import createSection from './stamps/section'
 
 const page = new Page({
-    title: 'info',
+    title: 'stampit',
     topLevel: true,
     background: '#f4f5f9'
-}).once('resize', (page) => {
-  const context = new Context()
-
-  app.extend({ context })
-  app.extend({ page })
-
-  context.mount(page)
-
-  const contentOpacity = new Transitionable(0)
-
-  const content = new SequentialLayout({
-    direction: 1,
-    spacing: 20,
-    opacity: contentOpacity
-  })
-
-  const scrolview = new ContainerSurface({
-      tagName: 'ScrollView',
-      size: [undefined, undefined]
-  })
-
-  scrolview.add(content)
-
-  context.add(scrolview)
-
-  new Thaw([
-  	function() {
-      let customerInfo = new ContentSection({
-        headerTitle: 'Customer Info',
-        data: [
-            { label: 'Name', text: 'Fredy' },
-            { label: 'Phone Number', text: '732-501-7273' }
-        ]
-      })
-
-      content.push(customerInfo)
-    },
-  	function() {
-      let deviceInfo = new ContentSection({
-        headerTitle: 'Device Info',
-        data: [
-            { label: 'Brand', text: 'Asus' },
-            { label: 'Password', text: '7273' },
-            { label: 'Thech Notes', text: 'The bigger, brilliant screen flows over, bringing life to everything you see. ... F1.9 female model photo ' },
-            { label: 'Current Status', text: 'Working on it' }
-        ]
-      })
-
-      content.push(deviceInfo)
-    },
-    function() {
-        let orderDetails = new ContentSection({
-        headerTitle: 'Order Details',
-        data: [
-            { label: 'Order Taken', text: '2 months ago' },
-            { text: 'Costs', action: 'Edit', repairs: [
-                {name: 'LCD', price: '150'},
-                {name: 'Battery', price: '50'},
-                {name: 'Motherboard replacement', price: '225'}
-            ]}
-        ]
-      })
-
-      content.push(orderDetails)
-    },
-    function () {
-      contentOpacity.set(1, {duration: 200})
-      new Button({
-        text: 'update text',
-        bottom: 20,
-        left: 20
-      }).on('select', () => {
-        app.testTextUpdate.onUpdate('He wrote his first amicus brief in October 2003 for two cases appealed before the Supreme Court of the United States, Shafiq Rasul v. George W. Bush and Khaled A.F. Al Odah v. United States of America. Attorneys Arturo J. Gonzalez and Sylvia M. Sokol of Morrison & Foerster LLP and Jon B. Streeter and Eumi K. He wrote his first amicus brief in October')
-      }).appendTo(page)
-
-      new Button({
-        text: 'update small',
-        bottom: 20,
-        right: 20
-      }).on('select', () => {
-        app.testTextUpdate.onUpdate('He wrote his first amicus brief in October 2003 for two cases appealed before the Supreme Court of the United States, Shafiq Rasul v. ')
-      }).appendTo(page)
-    }
-  ])
 })
 
-// const context = new Context()
-//
-// app.extend({ context })
-//
-// context.mount(page)
+const scroll = new ScrollView({
+    layoutData: {top: 0, left: 0, right: 0, bottom: 0}
+}).appendTo(page)
+
+
+createSection({
+    headerTitle: 'Customer info',
+    parent: scroll,
+    rows: [
+        {labelText: 'Name', textContent: 'Fredy Mendez'},
+        {labelText: 'Phone Number', textContent: '732 501 7273'}
+    ]
+})
+
+createSection({
+    headerTitle: 'Device info',
+    parent: scroll,
+    rows: [
+        {labelText: 'Brand', textContent: 'Apple'},
+        {labelText: 'Password', textContent: '877jas778a'},
+        {labelText: 'Tech Notes', textContent: 'Layout takes the form of a tree structure because most of layout is positioning one thing relative to another. '},
+        {labelText: 'Current Status', textContent: 'This nested structure only exists in JavaScript'}
+    ]
+})
+
+createSection({
+    headerTitle: 'Order Details',
+    parent: scroll,
+    rows: [
+        {labelText: 'Order Taken', textContent: '3 months ago'},
+        {labelText: 'Repair Costs', textContent: '732 501 7273'}
+    ]
+})
+
+
+
+
+// new Button({
+//     text: 'update',
+//     bottom: 20,
+//     centerX: 0
+// }).on('select', () => {
+//     container.updateTextContent('Bret Victor invents ')
+// }).appendTo(page)
 
 page.open()
-
-// const contentOpacity = new Transitionable(0)
-//
-// const content = new SequentialLayout({
-//   direction: 1,
-//   spacing: 20,
-//   opacity: contentOpacity
-// })
-
-// const customerInfo = new ContentSection({
-//   headerTitle: 'Customer Info',
-//   data: [
-//       { label: 'Name', text: 'Fredy' },
-//       { label: 'Phone Number', text: '732-501-7273' }
-//   ]
-// })
-
-// const deviceInfo = new ContentSection({
-//   headerTitle: 'Device Info',
-//   data: [
-//       { label: 'Brand', text: 'Asus' },
-//       { label: 'Password', text: '7273' },
-//       { label: 'Thech Notes', text: 'The bigger, brilliant screen flows over, bringing life to everything you see. ... F1.9 female model photo ' },
-//       { label: 'Current Status', text: 'Working on it' }
-//   ]
-// })
-
-// const orderDetails = new ContentSection({
-//   headerTitle: 'Order Details',
-//   data: [
-//       { label: 'Order Taken', text: '2 months ago' },
-//       { text: 'Costs', action: 'Edit', repairs: [
-//           {name: 'LCD', price: '150'},
-//           {name: 'Battery', price: '50'},
-//           {name: 'Motherboard replacement', price: '225'}
-//       ]}
-//   ]
-// })
-
-// content.push(customerInfo)
-// content.push(deviceInfo)
-// content.push(orderDetails)
-
-// const scrolview = new ContainerSurface({
-//     tagName: 'ScrollView',
-//     size: [undefined, undefined]
-// })
-//
-// scrolview.add(content)
-//
-// context.add(scrolview)
-//
-// new Thaw([
-// 	function() {
-//     let customerInfo = new ContentSection({
-//       headerTitle: 'Customer Info',
-//       data: [
-//           { label: 'Name', text: 'Fredy' },
-//           { label: 'Phone Number', text: '732-501-7273' }
-//       ]
-//     })
-//
-//     content.push(customerInfo)
-//   },
-// 	function() {
-//     let deviceInfo = new ContentSection({
-//       headerTitle: 'Device Info',
-//       data: [
-//           { label: 'Brand', text: 'Asus' },
-//           { label: 'Password', text: '7273' },
-//           { label: 'Thech Notes', text: 'The bigger, brilliant screen flows over, bringing life to everything you see. ... F1.9 female model photo ' },
-//           { label: 'Current Status', text: 'Working on it' }
-//       ]
-//     })
-//
-//     content.push(deviceInfo)
-//   },
-//   function() {
-//       let orderDetails = new ContentSection({
-//       headerTitle: 'Order Details',
-//       data: [
-//           { label: 'Order Taken', text: '2 months ago' },
-//           { text: 'Costs', action: 'Edit', repairs: [
-//               {name: 'LCD', price: '150'},
-//               {name: 'Battery', price: '50'},
-//               {name: 'Motherboard replacement', price: '225'}
-//           ]}
-//       ]
-//     })
-//
-//     content.push(orderDetails)
-//   },
-//   function () {
-//     contentOpacity.set(1, {duration: 200})
-//   }
-// ]);
