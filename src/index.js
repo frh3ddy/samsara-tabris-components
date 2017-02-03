@@ -43,17 +43,14 @@ const orderSection = Section({
     parent: scroll,
     rows: [
         {labelText: 'Order Taken', textContent: '3 months ago'},
-        {textContent: 'Repair Costs', actions: ['Edit', 'Add']}
+        {textContent: 'Repair Costs', actions: ['Edit', 'Add'], list: [
+            {repairName: 'LCD', cost: 200},
+            {repairName: 'LCD', cost: 200},
+            {repairName: 'LCD', cost: 200},
+            {repairName: 'LCD', cost: 200}
+        ]}
     ]
 })
 
-
-// new Button({
-//     text: 'update',
-//     bottom: 20,
-//     centerX: 0
-// }).on('select', () => {
-//     container.updateTextContent('Bret Victor invents ')
-// }).appendTo(page)
 
 page.open()

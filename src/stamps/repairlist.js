@@ -21,39 +21,22 @@ const Borders = init(function({borderColor, borderWidth}) {
     const container = this.container
 
     this.topBorder = new TextView({
-        layoutData: {height: borderWidth, top: 0, left: 15, right: 0},
+        layoutData: {height: borderWidth, top: 0, left: 50, right: 0},
         background: borderColor
     }).appendTo(container)
 
     this.bottomBorder = new TextView({
-        layoutData: {height: borderWidth, top: container, left: 15, right: 0},
+        layoutData: {height: borderWidth, top: container, left: 50, right: 0},
         background: borderColor
     }).appendTo(container.parent())
 })
 
 const ContainerContentMethods = methods({
-    addLabel(text){
-        this.textLabel = new TextView({
-            layoutData: {top: [this.topBorder, 10], left: 15},
-            text: text,
-            font: '11px',
-            textColor: '#6E7783',
-        }).appendTo(this.container)
+    addRepairName(text){
+        this.textLabel = this.createText(text, 'left')
     },
-    addTextContent(text){
-        let prev = this.topBorder
-        let margin = 25
-        if (this.textLabel) {
-            prev = this.textLabel
-            margin = 10
-        }
-
-        this.textContent = new TextView({
-            layoutData: {top: [prev, margin], bottom: margin, left: 15, right: 84},
-            text: text,
-            font: '16px',
-            textColor: '#252c41',
-        }).appendTo(this.container)
+    addRepairPrice(text){
+        this.textContent = this.createText(text, 'right')
     },
     updateTextContent(text) {
         this.textContent.set('text', text)
@@ -61,6 +44,14 @@ const ContainerContentMethods = methods({
     },
     updateSize() {
         this.container.set('height', null)
+    },
+    createText(text, align) {
+        return new TextView({
+            layoutData: {top: [this.topBorder, 10], [align]: 50, bottom: 10},
+            text: text,
+            font: '16px',
+            textColor: '#252c41',
+        }).appendTo(this.container)
     }
 })
 
@@ -90,7 +81,7 @@ const ContainerActionMethods = methods({
     }
 })
 
-export const Container =  compose(
+export const ContainerRepair =  compose(
     ContainerView,
     Borders,
     EventForwarder,
