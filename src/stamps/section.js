@@ -12,7 +12,8 @@ export default init(function({headerTitle, rows, parent}) {
         text: headerTitle.toUpperCase(),
     }).appendTo(parent)
 
-    rows.forEach(({labelText, textContent, actions, list}, index, array) => {
+    rows.forEach((data, index, array) => {
+        const {labelText, textContent, actions, list} = data
         let container = Container({borderColor: '#dddfe6', borderWidth: .5, parent})
 
         if (index === 0 ) container.topBorder.set({left: 0, height: 1})

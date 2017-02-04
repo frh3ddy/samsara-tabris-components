@@ -38,7 +38,7 @@ const deviceSection = Section({
     ]
 })
 
-const orderSection = Section({
+const detailsSection = Section({
     headerTitle: 'Order Details',
     parent: scroll,
     rows: [

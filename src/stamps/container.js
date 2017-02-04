@@ -67,24 +67,20 @@ const ContainerContentMethods = methods({
 const ContainerActionMethods = methods({
     addAction(action) {
         const margin = 25
+        let rightMargin = this.actions.length > 0 ? ['prev()', margin] : margin
+
         let actionView = new Button({
             cornerRadius: 22,
+            layoutData: {centerY: 0, right: rightMargin},
             // width: 44,
             // height: 44,
             // alignment: 'center',
             // background: '#d9e1e8',
             textColor: '#282c37',
-            centerY: 0,
-            right: margin,
             text: action
         }).on('select', (widget) => {
             this.container.trigger('actionFire', {type: action, instance: this})
         }).appendTo(this.container)
-
-        if (this.actions.length > 0) {
-            let prev = this.actions[this.actions.length - 1]
-            actionView.set('right', [prev, margin])
-        }
 
         this.actions.push(actionView)
     }
