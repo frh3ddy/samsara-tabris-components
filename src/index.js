@@ -44,10 +44,10 @@ const orderSection = Section({
     rows: [
         {labelText: 'Order Taken', textContent: '3 months ago'},
         {textContent: 'Repair Costs', actions: ['Edit', 'Add'], list: [
-            {repairName: 'LCD', cost: 200},
-            {repairName: 'LCD', cost: 200},
-            {repairName: 'LCD', cost: 200},
-            {repairName: 'LCD', cost: 200}
+            {repairName: 'LCD', cost: 199},
+            {repairName: 'Battery', cost: 65},
+            {repairName: 'Motherboard', cost: 249},
+            {repairName: 'Graphic Card', cost: 199}
         ]}
     ]
 })

@@ -22,12 +22,22 @@ export default init(function({headerTitle, rows, parent}) {
         container.addTextContent(textContent)
 
         if(list) {
+            let rr
             container.bottomBorder.set('background', 'white')
             list.forEach(({repairName, cost}, index) => {
                 const r = ContainerRepair({borderColor: '#dddfe6', borderWidth: .5, parent})
-                if (index === 0) r.topBorder.set('background', 'white')
+                if (index === 0) {
+                    r.topBorder.set('background', 'white')
+                    rr = r
+                }
                 r.addRepairName(repairName)
                 r.addRepairPrice(cost)
+                container.on('actionFire', ({type, instance}) => {
+                    if(type === 'Edit' && r.list.length > 0) {
+                        if(r.container.isDisposed()) return
+                        r.animate()
+                    }
+                })
             })
         }
 
@@ -43,7 +53,7 @@ export default init(function({headerTitle, rows, parent}) {
                     navigator.notification.prompt(
                         `enter new ${word}`, // message
                         function(results) {
-                          if (results.buttonIndex === 1) return
+                          if (results.buttonIndex === 1 || results.input1 === '') return
                           instance.updateTextContent(results.input1)
                         }, // callback to invoke
                         labelText, // title
@@ -64,10 +74,6 @@ export default init(function({headerTitle, rows, parent}) {
                             }, 1000)
                         }
                     )
-                }
-
-                if(type === 'Edit' && !labelText) {
-                    console.log('just trigger edit')
                 }
             })
         }
