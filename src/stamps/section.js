@@ -2,7 +2,7 @@ import { TextView } from 'tabris'
 import { compose, init, methods, props } from 'stampit'
 
 import { Container } from './container'
-import { ContainerRepair } from './repairlist'
+import { Repair } from './Repair'
 
 export default init(function({headerTitle, rows, parent}) {
     new TextView({
@@ -13,7 +13,7 @@ export default init(function({headerTitle, rows, parent}) {
     }).appendTo(parent)
 
     rows.forEach((data, index, array) => {
-        const {labelText, textContent, actions, list} = data
+        const {labelText, textContent, actions, repairList} = data
         let container = Container({borderColor: '#dddfe6', borderWidth: .5, parent})
 
         if (index === 0 ) container.topBorder.set({left: 0, height: 1})
@@ -22,26 +22,23 @@ export default init(function({headerTitle, rows, parent}) {
         if (labelText) container.addLabel(labelText)
         container.addTextContent(textContent)
 
-        if(list) {
-            let rr
+        if(repairList) {
             container.bottomBorder.set('background', 'white')
-            list.forEach(({repairName, cost}, index) => {
-                const r = ContainerRepair({borderColor: '#dddfe6', borderWidth: .5, parent})
+            repairList.forEach(({name, cost}, index) => {
+                const repair = Repair({borderColor: '#dddfe6', borderWidth: .5, parent})
                 if (index === 0) {
-                    r.topBorder.set('background', 'white')
-                    rr = r
+                    repair.topBorder.set('background', 'white')
                 }
-                r.addRepairName(repairName)
-                r.addRepairPrice(cost)
+                repair.addName(name)
+                repair.addPrice(cost)
                 container.on('actionFire', ({type, instance}) => {
-                    if(type === 'Edit' && r.list.length > 0) {
-                        if(r.container.isDisposed()) return
-                        r.animate()
+                    if(type === 'Edit' && repair.list.length > 0) {
+                        if(repair.container.isDisposed()) return
+                        repair.animate()
                     }
                 })
             })
         }
-
 
         if (actions) {
             actions.forEach(action => {
@@ -61,7 +58,6 @@ export default init(function({headerTitle, rows, parent}) {
                         ["Cancel", "Update"], // buttonTextViews
                         "" // defaultText
                     );
-                    // instance.updateTextContent('hshshshhshshshshhhs')
                 }
 
                 if(type === 'Text') {

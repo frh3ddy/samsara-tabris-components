@@ -43,11 +43,11 @@ const detailsSection = Section({
     parent: scroll,
     rows: [
         {labelText: 'Order Taken', textContent: '3 months ago'},
-        {textContent: 'Repair Costs', actions: ['Edit', 'Add'], list: [
-            {repairName: 'LCD', cost: 199},
-            {repairName: 'Battery', cost: 65},
-            {repairName: 'Motherboard', cost: 249},
-            {repairName: 'Graphic Card', cost: 199}
+        {textContent: 'Repair Costs', actions: ['Edit', 'Add'], repairList: [
+            {name: 'LCD', cost: 199},
+            {name: 'Battery', cost: 65},
+            {name: 'Motherboard', cost: 249},
+            {name: 'Graphic Card', cost: 199}
         ]}
     ]
 })
