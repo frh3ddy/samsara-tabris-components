@@ -35,9 +35,11 @@ export default init(function({headerTitle, rows, parent}) {
 
             repairList.forEach(({name, cost}, index) => {
                 const repair = Repair({borderColor: '#dddfe6', borderWidth: .5, parent: repairComposite})
+                if (!this.repairs) this.repairs = repair.list
                 if (index === 0) {
                     repair.topBorder.set('background', 'white')
                 }
+
                 repair.addName(name)
                 repair.addPrice(cost)
                 container.on('actionFire', ({type, instance}) => {
@@ -47,9 +49,18 @@ export default init(function({headerTitle, rows, parent}) {
                         isE = repair.isEditing
                     }
                 })
+
+                repair.on('priceNewEntered', () => {
+                    this.updateTotalPrice()
+                })
+
+                repair.on('removeRepair', () => {
+                    this.updateTotalPrice()
+                })
             })
 
-            Total({borderColor: '#dddfe6', borderWidth: .5, parent})
+            this.total =  Total({borderColor: '#dddfe6', borderWidth: .5, parent})
+            this.updateTotalPrice()
         }
 
         if (actions) {
@@ -104,6 +115,14 @@ export default init(function({headerTitle, rows, parent}) {
                                   repair.animate()
                               }
                           })
+
+                          repair.on('priceNewEntered', () => {
+                              this.updateTotalPrice()
+                          })
+
+                          repair.on('removeRepair', () => {
+                              this.updateTotalPrice()
+                          })
                         }, // callback to invoke
                         'New Repair', // title
                         ["Cancel", "Add"], // buttonTextViews
@@ -113,4 +132,12 @@ export default init(function({headerTitle, rows, parent}) {
             })
         }
     })
+}).methods({
+    updateTotalPrice() {
+        const total = this.repairs.reduce((a, b) => {
+            return a + b.getPrice()
+        }, 0)
+
+        this.total.updateTotal(total)
+    }
 })

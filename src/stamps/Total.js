@@ -1,6 +1,8 @@
 import { TextView, Composite, Button, ImageView} from 'tabris'
 import { compose, init, methods, props } from 'stampit'
 
+import CountUp from '../countup'
+
 const EventForwarder = methods({
     on(type, fn) {
         this.container.on(type, fn)
@@ -32,13 +34,13 @@ const Borders = init(function({borderColor, borderWidth}) {
 })
 
 const Content = init(function () {
-    new TextView({
+    this.text = new TextView({
         font: '16px bold',
         text: 'Total Repair Costs',
         layoutData: {left: 15, top: 20, bottom: 20}
     }).appendTo(this.container)
 
-    new TextView({
+    this.price = new TextView({
         text: '$289',
         font: '22px bold',
         layoutData: {right: 40, top: 20, bottom: 20}
@@ -46,26 +48,32 @@ const Content = init(function () {
 })
 
 const ContainerContentMethods = methods({
-    addName(text){
-        this.name = this.createText(text, 'left')
-    },
-    addPrice(text){
-        this.price = this.createText(text, 'right')
-    },
-    updatePrice(text) {
-        this.price.set('text', text)
-        this.updateSize()
-    },
-    createText(text, align) {
-        return new TextView({
-            layoutData: {top: [this.topBorder, 20], [align]: 50, bottom: 20},
-            text: text,
-            font: '16px',
-            textColor: '#252c41',
-        }).once('resize', (w, b) => {
-            w.parent().set('height', b.height + 40)
-        }).appendTo(this.container)
+    updateTotal(newTotal) {
+        this.text.set('text', 'Total Repair Costs')
+
+        if (newTotal <= 0) {
+            newTotal = 35
+            this.text.set('text', 'Diagnosis')
+        }
+
+        this.countUp.update(newTotal)
     }
+})
+
+const CountUpInit = init(function () {
+    const intitialValue = 0
+    const element = this.price
+    const options = {
+      useEasing : true,
+      useGrouping : false,
+      separator : ',',
+      decimal : '.',
+      prefix : '$',
+      suffix : ''
+    };
+
+    this.countUp = new CountUp(element, 0, intitialValue, 0, 1.5, options)
+    this.countUp.start()
 })
 
 export const Total = compose(
@@ -73,5 +81,6 @@ export const Total = compose(
     Borders,
     EventForwarder,
     ContainerContentMethods,
-    Content
+    Content,
+    CountUpInit
 )

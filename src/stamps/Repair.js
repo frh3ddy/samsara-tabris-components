@@ -62,6 +62,9 @@ const ContainerContentMethods = methods({
     updateSize() {
         this.parent.set('height', null)
     },
+    getPrice() {
+        return parseInt(this.price.get('text'))
+    },
     animate() {
         const priceDisplacement = this.isEditing ? 0 : -100
         const actionsDisplacement = this.isEditing ? 0 : -130
@@ -116,6 +119,7 @@ const Actions = init(function() {
             results => {
               if (results.buttonIndex === 1 || results.input1 === '') return
               this.price.set('text', results.input1)
+              this.container.trigger('priceNewEntered')
             }, // callback to invoke
             title, // title
             ["Cancel", "Update"], // buttonTextViews
@@ -162,14 +166,18 @@ const Actions = init(function() {
             }, {
                 duration: 200
             }).then(() => {
-                this.container.dispose()
-                this.bottomBorder.dispose()
+
                 if (index > -1) {
                     this.list.splice(index, 1);
                 }
                 if (this.list.length > 0) {
                     this.list[0].topBorder.set('background', 'white')
                 }
+
+                this.container.trigger('removeRepair')
+
+                this.container.dispose()
+                this.bottomBorder.dispose()
 
                 this.updateSize()
             })
