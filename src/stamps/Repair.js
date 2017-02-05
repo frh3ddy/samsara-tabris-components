@@ -12,6 +12,7 @@ const SharedProps = props({
 })
 
 const ContainerView = init(function({parent}) {
+    this.parent = parent
     this.actions = []
     const container = new Composite({
         layoutData: {left: 0, right: 0, top: ['prev()', -.5]},
@@ -57,6 +58,9 @@ const ContainerContentMethods = methods({
         }).once('resize', (w, b) => {
             w.parent().set('height', b.height + 40)
         }).appendTo(this.container)
+    },
+    updateSize() {
+        this.parent.set('height', null)
     },
     animate() {
         const priceDisplacement = this.isEditing ? 0 : -100
@@ -158,25 +162,16 @@ const Actions = init(function() {
             }, {
                 duration: 200
             }).then(() => {
-                const below = this.list[index + 1]
-                below.container.animate({
-                    transform: {
-                        translationY: - height
-                    }
-                },{
-                    duration: 200
-                }).then(() => {
-                    this.container.dispose()
-                    this.bottomBorder.dispose()
-                    if (index > -1) {
-                        this.list.splice(index, 1);
-                    }
-                    if (this.list.length > 0) {
-                        this.list[0].topBorder.set('background', 'white')
-                    }
+                this.container.dispose()
+                this.bottomBorder.dispose()
+                if (index > -1) {
+                    this.list.splice(index, 1);
+                }
+                if (this.list.length > 0) {
+                    this.list[0].topBorder.set('background', 'white')
+                }
 
-                    below.set('top', ['prev()', -.5])
-                })
+                this.updateSize()
             })
 
             // const index = this.list.indexOf(this)

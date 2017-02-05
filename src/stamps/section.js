@@ -1,10 +1,13 @@
-import { TextView } from 'tabris'
+import { TextView, Composite } from 'tabris'
 import { compose, init, methods, props } from 'stampit'
 
 import { Container } from './container'
 import { Repair } from './Repair'
+import { Total } from './Total'
 
 export default init(function({headerTitle, rows, parent}) {
+    let repairC
+    let isE
     new TextView({
         layoutData: {left: 8, height: 25, top: ['prev()', 15]},
         font: '13px bold',
@@ -24,8 +27,14 @@ export default init(function({headerTitle, rows, parent}) {
 
         if(repairList) {
             container.bottomBorder.set('background', 'white')
+            const repairComposite = new Composite({
+                layoutData: {top: 'prev()', left: 0, right: 0}
+            }).appendTo(parent)
+
+            repairC = repairComposite
+
             repairList.forEach(({name, cost}, index) => {
-                const repair = Repair({borderColor: '#dddfe6', borderWidth: .5, parent})
+                const repair = Repair({borderColor: '#dddfe6', borderWidth: .5, parent: repairComposite})
                 if (index === 0) {
                     repair.topBorder.set('background', 'white')
                 }
@@ -35,9 +44,12 @@ export default init(function({headerTitle, rows, parent}) {
                     if(type === 'Edit' && repair.list.length > 0) {
                         if(repair.container.isDisposed()) return
                         repair.animate()
+                        isE = repair.isEditing
                     }
                 })
             })
+
+            Total({borderColor: '#dddfe6', borderWidth: .5, parent})
         }
 
         if (actions) {
@@ -70,6 +82,32 @@ export default init(function({headerTitle, rows, parent}) {
                                 }
                             }, 1000)
                         }
+                    )
+                }
+
+                if (type === 'Add') {
+                    navigator.notification.prompt(
+                        `enter new repair`, // message
+                        results => {
+                          if (results.buttonIndex === 1 || results.input1 === '') return
+                          const repair = Repair({borderColor: '#dddfe6', borderWidth: .5, parent: repairC})
+                          if (repair.list.length === 0) {
+                              repair.topBorder.set('background', 'white')
+                          }
+                          repair.addName(results.input1)
+                          repair.addPrice(0)
+                          if (isE) repair.animate()
+
+                          container.on('actionFire', ({type, instance}) => {
+                              if(type === 'Edit' && repair.list.length > 0) {
+                                  if(repair.container.isDisposed()) return
+                                  repair.animate()
+                              }
+                          })
+                        }, // callback to invoke
+                        'New Repair', // title
+                        ["Cancel", "Add"], // buttonTextViews
+                        "" // defaultText
                     )
                 }
             })

@@ -23,6 +23,20 @@ const customerSection = Section({
     ]
 })
 
+const detailsSection = Section({
+    headerTitle: 'Order Details',
+    parent: scroll,
+    rows: [
+        {labelText: 'Order Taken', textContent: '3 months ago'},
+        {textContent: 'Repair Costs', actions: ['Edit', 'Add'], repairList: [
+            {name: 'LCD', cost: 199},
+            {name: 'Battery', cost: 65},
+            {name: 'Motherboard', cost: 249},
+            {name: 'Graphic Card', cost: 199}
+        ]}
+    ]
+})
+
 const deviceSection = Section({
     headerTitle: 'Device info',
     parent: scroll,
@@ -38,19 +52,10 @@ const deviceSection = Section({
     ]
 })
 
-const detailsSection = Section({
-    headerTitle: 'Order Details',
-    parent: scroll,
-    rows: [
-        {labelText: 'Order Taken', textContent: '3 months ago'},
-        {textContent: 'Repair Costs', actions: ['Edit', 'Add'], repairList: [
-            {name: 'LCD', cost: 199},
-            {name: 'Battery', cost: 65},
-            {name: 'Motherboard', cost: 249},
-            {name: 'Graphic Card', cost: 199}
-        ]}
-    ]
-})
+new Composite({
+    top: ['prev()', 40]
+}).appendTo(scroll)
+
 
 
 page.open()
