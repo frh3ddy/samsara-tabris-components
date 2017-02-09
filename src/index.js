@@ -16,17 +16,15 @@ const scroll = new ScrollView({
 
 const customerSection = Section({
     headerTitle: 'Customer info',
-    parent: scroll,
-    rows: [
+    data: [
         {labelText: 'Name', textContent: 'Fredy Mendez'},
         {labelText: 'Phone Number', textContent: '732 501 7273', actions: ['Call', 'Text']}
     ]
-})
+}).appendTo(scroll)
 
 const detailsSection = Section({
     headerTitle: 'Order Details',
-    parent: scroll,
-    rows: [
+    data: [
         {labelText: 'Order Taken', textContent: '3 months ago'},
         {textContent: 'Repair Costs', actions: ['Edit', 'Add'], repairList: [
             {name: 'LCD', cost: 199},
@@ -35,12 +33,11 @@ const detailsSection = Section({
             {name: 'Graphic Card', cost: 199}
         ]}
     ]
-})
+}).appendTo(scroll)
 
 const deviceSection = Section({
     headerTitle: 'Device info',
-    parent: scroll,
-    rows: [
+    data: [
         {labelText: 'Brand', textContent: 'Apple'},
         {labelText: 'Password', textContent: '877jas778a'},
         {
@@ -50,7 +47,7 @@ const deviceSection = Section({
         },
         {labelText: 'Current Status', textContent: 'This nested structure only exists in JavaScript', actions: ['Edit']}
     ]
-})
+}).appendTo(scroll)
 
 new Composite({
     top: ['prev()', 40]

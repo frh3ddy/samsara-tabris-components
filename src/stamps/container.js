@@ -1,70 +1,11 @@
 import { TextView, Composite, Button} from 'tabris'
 import { compose, init, methods, props } from 'stampit'
 
-const EventForwarder = methods({
-    on(type, fn) {
-        this.container.on(type, fn)
-    }
-})
+import BaseContainer from './BaseContainer'
 
-const ContainerView = init(function({parent}) {
+const Acions = init(function() {
     this.actions = []
-    const container = new Composite({
-        layoutData: {left: 0, right: 0, top: ['prev()', -.5]},
-        background: 'white'
-    }).appendTo(parent)
-
-    this.container = container
-})
-
-const Borders = init(function({borderColor, borderWidth}) {
-    const container = this.container
-
-    this.topBorder = new TextView({
-        layoutData: {height: borderWidth, top: 0, left: 15, right: 0},
-        background: borderColor
-    }).appendTo(container)
-
-    this.bottomBorder = new TextView({
-        layoutData: {height: borderWidth, top: container, left: 15, right: 0},
-        background: borderColor
-    }).appendTo(container.parent())
-})
-
-const ContainerContentMethods = methods({
-    addLabel(text){
-        this.textLabel = new TextView({
-            layoutData: {top: [this.topBorder, 10], left: 15},
-            text: text,
-            font: '11px',
-            textColor: '#6E7783',
-        }).appendTo(this.container)
-    },
-    addTextContent(text){
-        let prev = this.topBorder
-        let margin = 25
-        if (this.textLabel) {
-            prev = this.textLabel
-            margin = 10
-        }
-
-        this.textContent = new TextView({
-            layoutData: {top: [prev, margin], bottom: margin, left: 15, right: 84},
-            text: text,
-            font: '16px',
-            textColor: '#252c41',
-        }).appendTo(this.container)
-    },
-    updateTextContent(text) {
-        this.textContent.set('text', text)
-        this.updateSize()
-    },
-    updateSize() {
-        this.container.set('height', null)
-    }
-})
-
-const ContainerActionMethods = methods({
+}).methods({
     addAction(action) {
         const margin = 25
         let rightMargin = this.actions.length > 0 ? ['prev()', margin] : margin
@@ -79,17 +20,79 @@ const ContainerActionMethods = methods({
             textColor: '#282c37',
             text: action
         }).on('select', (widget) => {
-            this.container.trigger('actionFire', {type: action, instance: this})
-        }).appendTo(this.container)
+            if(action === 'Edit') this.editText()
+            if(action === 'Text') this.openSMSComposer()
+        }).appendTo(this)
 
         this.actions.push(actionView)
+    },
+    editText() {
+        const labelText = this.textLabel.get('text')
+        const word = labelText.split(' ')[1]
+
+        navigator.notification.prompt(
+            `enter new ${word}`, // message
+            results => {
+              if (results.buttonIndex === 1 || results.input1 === '') return
+              this.updateTextContent(results.input1)
+            }, // callback to invoke
+            labelText, // title
+            ["Cancel", "Update"], // buttonTextViews
+            "" // defaultText
+        );
+    },
+    openSMSComposer() {
+        const message  = 'test mesage'
+        window.plugins.socialsharing.shareViaSMS({message: message},
+            "7329256350", succes => {
+                setTimeout(() => {
+                    if (succes) {
+                        window.plugins.toast.showShortCenter('Message sent')
+                    }
+                }, 1000)
+            }
+        )
+    }
+
+})
+
+const ContentMethods = methods({
+    addLabel(text){
+        this.textLabel = new TextView({
+            layoutData: {top: 10},
+            text: text,
+            font: '11px',
+            textColor: '#6E7783',
+        }).appendTo(this)
+    },
+    addTextContent(text){
+        let margin = 25
+        let topMargin = margin
+
+        if (this.textLabel) {
+            margin = 10
+            let topMargin = [this.textLabel, margin]
+        }
+
+        this.textContent = new TextView({
+            layoutData: {top: topMargin, bottom: margin , left: 0, right: 84},
+            text: text,
+            font: '16px',
+            textColor: '#252c41',
+        }).appendTo(this)
+    },
+    updateTextContent(text) {
+        this.textContent.set('text', text)
+        this.updateSize()
+    },
+    updateSize() {
+        this.set('height', null)
     }
 })
 
-export const Container =  compose(
-    ContainerView,
-    Borders,
-    EventForwarder,
-    ContainerContentMethods,
-    ContainerActionMethods
+
+export default compose(
+    BaseContainer,
+    Acions,
+    ContentMethods,
 )

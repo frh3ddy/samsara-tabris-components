@@ -1,4 +1,4 @@
-import { Composite } from 'tabris'
+import { Composite, TextView } from 'tabris'
 import { compose, init, methods, props, composers } from 'stampit'
 
 
@@ -18,22 +18,46 @@ const ContainerInit = init( function ({layoutData, background}) {
     this.set('background', this.background)
 
 }).props({
-    layoutData: {left: 0, right: 0, top: ['prev()', -.5]},
-    background: 'white'
+    layoutData: {left: 0, right: 0, top: 'prev()'},
+    background: 'initial'
 })
 
-const Borders = init(function({borderColor, borderWidth}) {
-    this.topBorder = new TextView({
-        layoutData: {height: borderWidth, top: 0, left: 0, right: 0},
-        background: borderColor
-    }).appendTo(this)
+const Borders = init(function({border}) {
+    if (border) this.addBorders(border)
+}).methods({
+    addBorders(border) {
+        const borders = border.split(' ')
 
-    this.bottomBorder = new TextView({
-        layoutData: {height: borderWidth, bottom: 0, left: 0, right: 0},
-        background: borderColor
-    }).appendTo(this)
+        const color = borders[0]
+        const top = borders[1]
+        const right = borders[2]
+        const bottom = borders[3]
+        const left = borders[4]
+
+        this.once('resize', () => {
+            this.topBorder = new TextView({
+                layoutData: {height: top, top: 0, left: 0, right: 0},
+                background: color
+            }).appendTo(this)
+
+            // this.rightBorder = new TextView({
+            //     layoutData: {width: right, top: 0, right: 0, bottom: 0},
+            //     background: color
+            // }).appendTo(this)
+
+            this.bottomBorder = new TextView({
+                layoutData: {height: bottom, bottom: 0, left: 0, right: 0},
+                background: color
+            }).appendTo(this)
+
+            // this.leftBorder = new TextView({
+            //     layoutData: {width: left, top: 0, left: 0, bottom: 0},
+            //     background: color
+            // }).appendTo(this)
+        })
+    }
 })
 
-const Container = compose(ContainerInit, ContentContainer, Borders);
+const BaseContainer = compose(ContainerInit, ContentContainer, Borders);
 
-export default Container
+export default BaseContainer
