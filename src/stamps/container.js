@@ -20,13 +20,22 @@ const Acions = init(function() {
             textColor: '#282c37',
             text: action
         }).on('select', (widget) => {
+            if (!this.textLabel) {
+                this.trigger('Edit')
+                return
+            }
+
             if(action === 'Edit') this.editText()
             if(action === 'Text') this.openSMSComposer()
         }).appendTo(this)
 
         this.actions.push(actionView)
+
+        return this
     },
     editText() {
+        if (!this.textLabel) return
+
         const labelText = this.textLabel.get('text')
         const word = labelText.split(' ')[1]
 
@@ -58,12 +67,15 @@ const Acions = init(function() {
 
 const ContentMethods = methods({
     addLabel(text){
+        if (!text) return
         this.textLabel = new TextView({
             layoutData: {top: 10},
             text: text,
             font: '11px',
             textColor: '#6E7783',
         }).appendTo(this)
+
+        return this
     },
     addTextContent(text){
         let margin = 25
@@ -80,6 +92,8 @@ const ContentMethods = methods({
             font: '16px',
             textColor: '#252c41',
         }).appendTo(this)
+
+        return this
     },
     updateTextContent(text) {
         this.textContent.set('text', text)

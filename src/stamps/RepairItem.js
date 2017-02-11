@@ -2,11 +2,12 @@ import { TextView, Composite, Button, ImageView} from 'tabris'
 import { compose, init, methods, props } from 'stampit'
 
 import BaseContainer from './BaseContainer'
+import anime from 'animejs'
 
 const ContentMethods = methods({
     addName(text){
         this.name = new TextView({
-            layoutData: {centerY: 0, left: 0,},
+            layoutData: {centerY: 0, left: 30,},
             text: text,
             font: '16px',
             textColor: '#252c41',
@@ -30,12 +31,12 @@ const ContentMethods = methods({
     getPrice() {
         return parseInt(this.price.get('text'))
     },
-    animate() {
+    showActions() {
         const priceDisplacement = this.isEditing ? 0 : -100
         const actionsDisplacement = this.isEditing ? 0 : -130
-        const groupDisplacement = this.isEditing ? 0 : -35
+        const groupDisplacement = this.isEditing ? 0 : -30
 
-        const group = [ this.topBorder, this.bottomBorder, this.name ]
+        const group = [this.name]
 
         group.forEach(item => {
             item.animate({
@@ -86,7 +87,7 @@ const Actions = init(function() {
             results => {
               if (results.buttonIndex === 1 || results.input1 === '') return
               this.price.set('text', results.input1)
-              this.container.trigger('priceNewEntered')
+              this.trigger('priceUpdated')
             }, // callback to invoke
             title, // title
             ["Cancel", "Update"], // buttonTextViews
@@ -106,11 +107,6 @@ const Actions = init(function() {
       layoutData: {top: '20%', bottom: '20%', right:0, width: .5}
     }).appendTo(editComposite)
 
-    // new Composite({
-    //   background: '#dddfe6',
-    //   layoutData: {top: '20%', bottom: '20%', left:0, width: .5}
-    // }).appendTo(editComposite)
-
     const deleteComposite = new Composite({
         layoutData: {top: 0, bottom:0, right: 0, width:65}
     }).on('tap', () => {
@@ -123,41 +119,34 @@ const Actions = init(function() {
             const cancelButton = buttonIndex === 2 ? true : false
             if (cancelButton) return
 
-            const {width, height} = this.container.get('bounds')
-            const index = this.list.indexOf(this)
+            const {width, height} = this.get('bounds')
 
-            this.container.animate({
+            this.animate({
                 transform: {
                     translationX: width
                 }
             }, {
-                duration: 200
+                duration: 150
             }).then(() => {
-
-                if (index > -1) {
-                    this.list.splice(index, 1);
-                }
-                if (this.list.length > 0) {
-                    this.list[0].topBorder.set('background', 'white')
+                var myObject = {
+                  top: 0
                 }
 
-                this.container.trigger('removeRepair')
-
-                this.container.dispose()
-                this.bottomBorder.dispose()
-
-                this.updateSize()
-            })
-
-            // const index = this.list.indexOf(this)
-            // this.container.dispose()
-            // this.bottomBorder.dispose()
-            // if (index > -1) {
-            //     this.list.splice(index, 1);
-            // }
-            // if (this.list.length > 0) {
-            //     this.list[0].topBorder.set('background', 'white')
-            // }
+                var myAnimation = anime({
+                    targets: myObject,
+                    top: height,
+                    duration: 300,
+                    round: false,
+                    easing: 'easeInOutQuint',
+                    loop: false,
+                    update: () => {
+                    this.set('top', ['prev()', - myObject.top])
+                    },
+                    complete: () => {
+                        this.trigger('removeRepair', this)
+                    }
+                })
+            }).catch(error => console.log(error))
         })
     }).appendTo(actionsContainer)
 

@@ -55,6 +55,8 @@ const Borders = init(function({border}) {
             //     background: color
             // }).appendTo(this)
         })
+        
+        return this
     }
 })
 
