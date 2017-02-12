@@ -20,10 +20,12 @@ const Acions = init(function() {
             textColor: '#282c37',
             text: action
         }).on('select', (widget) => {
-            if (!this.textLabel) {
+            if (!this.textLabel && action === 'Edit') {
                 this.trigger('Edit')
                 return
             }
+
+            if(action === 'Add') this.trigger('Add')
 
             if(action === 'Edit') this.editText()
             if(action === 'Text') this.openSMSComposer()

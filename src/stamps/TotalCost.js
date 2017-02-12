@@ -15,7 +15,7 @@ const TotalCost = init(function () {
     this.price = new TextView({
         layoutData: {top: 20, bottom:20, right: 0},
         text: '$0',
-        font: '16px',
+        font: '22px bold',
         textColor: '#252c41',
     }).appendTo(this)
 

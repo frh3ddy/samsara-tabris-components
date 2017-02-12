@@ -8,6 +8,7 @@ import anime from 'animejs'
 import TotalCost from './TotalCost'
 
 const ListContainer = init(function({data}) {
+    this.isEditing = false
     this.list = []
     const [orderDate, repairCost] = data
 
@@ -27,6 +28,11 @@ const ListContainer = init(function({data}) {
 
     reparCost.on('Edit', () => {
         this.showRepairActions()
+        this.isEditing = !this.isEditing
+    })
+
+    reparCost.on('Add', () => {
+        this.addRepair()
     })
 
     repairCost.repairList.forEach((item) => {
@@ -46,7 +52,7 @@ const ListContainer = init(function({data}) {
     })
 
     this.totalCost = TotalCost({
-        layoutData: {left: 50, right: 50, top: 'prev()'}
+        layoutData: {left: 20, right: 50, top: 'prev()'}
     }).appendTo(this)
 
     this.updateTotalCost()
@@ -72,6 +78,31 @@ const ListContainer = init(function({data}) {
         }, 0)
 
         this.totalCost.updateCost(totalCost)
+    },
+    addRepair() {
+        navigator.notification.prompt(
+            `enter new repair`, // message
+            results => {
+                if (results.buttonIndex === 1 || results.input1 === '') return
+                let repair = RepairItem({
+                    layoutData: {left: 20, right: 0, top: 'prev()'},
+                    border: '#dddfe6 0 0 .5 0'
+                })
+
+                repair.on('removeRepair', repair => this.removeRepair(repair))
+                repair.on('priceUpdated', () => this.updateTotalCost())
+
+                repair.addName(results.input1)
+                repair.addPrice(0)
+                repair.insertBefore(this.totalCost)
+
+                if (this.isEditing) repair.showActions()
+                this.list.push(repair)
+            }, // callback to invoke
+            'New Repair', // title
+            ["Cancel", "Add"], // buttonTextViews
+            "" // defaultText
+        )
     }
 })
 

@@ -16,53 +16,38 @@ const ContentMethods = methods({
     addPrice(text){
         this.price = new TextView({
             layoutData: {centerY: 0, right: 50},
-            text: text,
+            text: '$' + text,
             font: '16px',
             textColor: '#252c41',
         }).appendTo(this)
     },
     updatePrice(text) {
-        this.price.set('text', text)
-        this.updateSize()
-    },
-    updateSize() {
-        this.parent().set('height', null)
+        this.price.set('text', '$' + text)
+        this.trigger('priceUpdated')
     },
     getPrice() {
-        return parseInt(this.price.get('text'))
+        return parseInt(this.price.get('text').substr(1))
     },
     showActions() {
-        const priceDisplacement = this.isEditing ? 0 : -100
-        const actionsDisplacement = this.isEditing ? 0 : -130
-        const groupDisplacement = this.isEditing ? 0 : -30
+        const AnimationDuration = { duration: 200 }
 
-        const group = [this.name]
-
-        group.forEach(item => {
-            item.animate({
-                transform: {
-                    translationX: groupDisplacement
-                }
-            },{
-                duration: 200
-            })
-        })
+        this.name.animate({
+            transform: {
+                translationX: this.isEditing ? 0 : -30
+            }
+        }, AnimationDuration)
 
         this.price.animate({
             transform: {
-                translationX: priceDisplacement
+                translationX: this.isEditing ? 0 : -100
             }
-        }, {
-            duration: 200
-        })
+        }, AnimationDuration)
 
         this.actionsContainer.animate({
             transform: {
-                translationX: actionsDisplacement
+                translationX: this.isEditing ? 0 : -130
             }
-        },{
-            duration: 200
-        })
+        }, AnimationDuration)
 
         this.isEditing = !this.isEditing
     }
@@ -81,17 +66,17 @@ const Actions = init(function() {
         layoutData: {top: 0, bottom:0, left: 0, width: 65}
     }).on('tap', () => {
         const title = this.name.get('text')
+        const defaultText = this.getPrice().toString()
 
         navigator.notification.prompt(
             `enter new price`, // message
-            results => {
-              if (results.buttonIndex === 1 || results.input1 === '') return
-              this.price.set('text', results.input1)
-              this.trigger('priceUpdated')
+            ({buttonIndex, input1}) => {
+              if (buttonIndex === 1 || isNotANumber(input1)) return
+              this.updatePrice(input1)
             }, // callback to invoke
             title, // title
             ["Cancel", "Update"], // buttonTextViews
-            "" // defaultText
+            defaultText // defaultText
         );
     }).appendTo(actionsContainer)
 
@@ -159,5 +144,9 @@ const Actions = init(function() {
 
     this.actionsContainer = actionsContainer
 })
+
+function isNotANumber(input) {
+    return input === '' || isNaN(parseInt(input))
+}
 
 export default compose( BaseContainer, ContentMethods, Actions )
