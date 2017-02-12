@@ -5,6 +5,7 @@ import BaseContainer from './BaseContainer'
 import Container from './Container'
 import RepairItem from './RepairItem'
 import anime from 'animejs'
+import TotalCost from './TotalCost'
 
 const ListContainer = init(function({data}) {
     this.list = []
@@ -37,11 +38,19 @@ const ListContainer = init(function({data}) {
         this.list.push(repair)
 
         repair.on('removeRepair', repair => this.removeRepair(repair))
+        repair.on('priceUpdated', () => this.updateTotalCost())
 
         repair.addName(item.name)
         repair.addPrice(item.cost)
         repair.appendTo(this)
     })
+
+    this.totalCost = TotalCost({
+        layoutData: {left: 50, right: 50, top: 'prev()'}
+    }).appendTo(this)
+
+    this.updateTotalCost()
+
 }).methods({
     showRepairActions() {
         this.list.forEach(item => {
@@ -54,7 +63,15 @@ const ListContainer = init(function({data}) {
             this.list.splice(index, 1);
         }
 
+        this.updateTotalCost()
         repair.dispose()
+    },
+    updateTotalCost() {
+        const totalCost = this.list.reduce( (a, b) => {
+            return a + b.getPrice()
+        }, 0)
+
+        this.totalCost.updateCost(totalCost)
     }
 })
 
