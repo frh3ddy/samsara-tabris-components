@@ -5,6 +5,39 @@ import BaseContainer from './BaseContainer'
 import ListContainer from './ListContainer'
 import RepairList from './RepairList'
 
+//TODO, move this to a polyfill module
+var lastTime = 0;
+
+if (!window.requestAnimationFrame) {
+    window.requestAnimationFrame = function(callback, element) {
+        var currTime = new Date().getTime();
+        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+        var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+          timeToCall);
+        lastTime = currTime + timeToCall;
+        return id;
+    };
+}
+if (!window.cancelAnimationFrame) {
+    window.cancelAnimationFrame = function(id) {
+        clearTimeout(id);
+    };
+}
+
+// @example
+// const detailsSection = Section({
+//     headerTitle: 'Order Details',
+//     data: [
+//         {labelText: 'Order Taken', textContent: '3 months ago'},
+//         {textContent: 'Repair Costs', actions: ['Edit', 'Add'], repairList: [
+//             {name: 'LCD', cost: 199},
+//             {name: 'Battery', cost: 65},
+//             {name: 'Motherboard', cost: 249},
+//             {name: 'Graphic Card', cost: 199}
+//         ]}
+//     ]
+// }).appendTo(scroll)
+
 const Section = init(function ({headerTitle, data}) {
     const hasRepairList = data[1].repairList
 

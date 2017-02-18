@@ -1,35 +1,33 @@
-import { TextView, Composite, Button} from 'tabris'
+import { TextView, Composite, Button, ImageView } from 'tabris'
 import { compose, init, methods, props } from 'stampit'
 
 import BaseContainer from './BaseContainer'
 
 const Acions = init(function() {
     this.actions = []
+    this.isEditing = false
 }).methods({
     addAction(action) {
-        const margin = 25
-        let rightMargin = this.actions.length > 0 ? ['prev()', margin] : margin
+        const actionView = this.createActionView(action)
 
-        let actionView = new Button({
-            cornerRadius: 22,
-            layoutData: {centerY: 0, right: rightMargin},
-            // width: 44,
-            // height: 44,
-            // alignment: 'center',
-            // background: '#d9e1e8',
-            textColor: '#282c37',
-            text: action
-        }).on('select', (widget) => {
-            if (!this.textLabel && action === 'Edit') {
+        actionView.on('tap', (widget) => {
+            if (!this.textLabel && action.text === 'Edit') {
                 this.trigger('Edit')
+                this.isEditing = !this.isEditing
+                if (this.isEditing) {
+                    widget.children().first().set('text', 'Done')
+                } else {
+                    widget.children().first().set('text', 'Edit')
+                }
+
                 return
             }
 
-            if(action === 'Add') this.trigger('Add')
+            if(action.text === 'Add') this.trigger('Add')
 
-            if(action === 'Edit') this.editText()
-            if(action === 'Text') this.openSMSComposer()
-        }).appendTo(this)
+            if(action.text === 'Edit') this.editText()
+            if(action.text === 'Text') this.openSMSComposer()
+        })
 
         this.actions.push(actionView)
 
@@ -63,6 +61,39 @@ const Acions = init(function() {
                 }, 1000)
             }
         )
+    },
+    createActionView({type, text}) {
+        const margin = 25
+        let rightMargin = this.actions.length > 0 ? ['prev()', margin] : margin
+
+        if (type === 'text') {
+            const editComposite = new Composite({
+                layoutData: {top: 0, right: rightMargin},
+                height: 50,
+                width: 44,
+            }).appendTo(this)
+
+            new TextView({
+                layoutData: {top: 10, centerX: 0},
+                textColor: '#0080ff',
+                text: text
+            }).appendTo(editComposite)
+
+            return editComposite
+        } else {
+            return new ImageView({
+                image: {src: `images/icon${text}.png`, scale: 3},
+                highlightOnTouch: true,
+
+                layoutData: {centerY: 0, right: rightMargin},
+                // width: 44,
+                // height: 44,
+                // alignment: 'center',
+                // background: '#d9e1e8',
+                // textColor: '#282c37',
+                // text: text
+            }).appendTo(this)
+        }
     }
 
 })
