@@ -29,14 +29,21 @@ if (!window.cancelAnimationFrame) {
 //     headerTitle: 'Order Details',
 //     data: [
 //         {labelText: 'Order Taken', textContent: '3 months ago'},
-//         {textContent: 'Repair Costs', actions: ['Edit', 'Add'], repairList: [
-//             {name: 'LCD', cost: 199},
-//             {name: 'Battery', cost: 65},
-//             {name: 'Motherboard', cost: 249},
-//             {name: 'Graphic Card', cost: 199}
-//         ]}
+//         {
+//             textContent: 'Repair Costs',
+//             actions: [
+//                 {type: 'text', text: 'Edit'},
+//                 {type: 'text', text: 'Add'}
+//             ],
+//             repairList: [
+//                 {name: 'LCD', cost: 199},
+//                 {name: 'Battery', cost: 65},
+//                 {name: 'Motherboard', cost: 249},
+//                 {name: 'Graphic Card', cost: 199}
+//             ]
+//         }
 //     ]
-// }).appendTo(scroll)
+// }).appendTo(widget)
 
 const Section = init(function ({headerTitle, data}) {
     const hasRepairList = data[1].repairList
