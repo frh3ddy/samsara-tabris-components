@@ -44,6 +44,12 @@ const BaseInput = init(function ({
             this.isValid = true
             this.label.set('textColor', 'green')
         }
+    },
+    clear() {
+        this.isValid = false
+        this.selected = undefined
+        this.inputs.forEach(input => input.set('selection', false))
+        this.label.set('textColor', 'initial')
     }
 })
 

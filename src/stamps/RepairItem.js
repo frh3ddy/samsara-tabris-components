@@ -2,7 +2,7 @@ import { TextView, Composite, Button, ImageView} from 'tabris'
 import { compose, init, methods, props } from 'stampit'
 
 import BaseContainer from './BaseContainer'
-import anime from 'animejs'
+import anime from 'animator'
 
 const ContentMethods = methods({
     addName(text){

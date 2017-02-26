@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "ampersand-app": "^2.0.0",
-    "animejs": "^1.1.3",
+    "animator": "https://github.com/frh3ddy/anime.git",
     "samsara-tabris": "https://github.com/frh3ddy/samsara-tabris.git",
     "stampit": "^3.1.2",
     "string": "^3.3.3",

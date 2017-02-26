@@ -35,6 +35,12 @@ const BaseInput = init(function ({
         this.input.set('height', 100)
         this.label.set('layoutData', {top: 5, width: 120})
     }
+}).methods({
+    clear() {
+        this.isValid = false,
+        this.input.set('text', '')
+        this.label.set('textColor', 'initial')
+    }
 })
 
 export default compose(BaseContainer, BaseInput)

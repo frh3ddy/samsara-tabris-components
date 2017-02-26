@@ -47,10 +47,6 @@ ampersand-version@^1.0.2:
     find-root "^0.1.1"
     through2 "^0.6.3"
 
-animejs:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/animejs/-/animejs-1.1.3.tgz#685ea5e837981d98bdab2ab168aa8530955e970d"
-
 ansi-escapes@^1.1.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/ansi-escapes/-/ansi-escapes-1.4.0.tgz#d3a8a83b319aa67793662b13e761c7911422306e"
@@ -1198,6 +1194,11 @@ homedir-polyfill@^1.0.0:
   resolved "https://registry.yarnpkg.com/homedir-polyfill/-/homedir-polyfill-1.0.1.tgz#4c2bbc8a758998feebf5ed68580f76d46768b4bc"
   dependencies:
     parse-passwd "^1.0.0"
+
+"https://github.com/frh3ddy/anime.git":
+  name animator
+  version "1.1.3"
+  resolved "https://github.com/frh3ddy/anime.git#2b2e66175bac8c729a8d505ce8dd8e01e47478c5"
 
 ignore@^3.2.0:
   version "3.2.0"
