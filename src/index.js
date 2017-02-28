@@ -5,10 +5,11 @@ import TextInput from './stamps/inputs/TextInput'
 import Picker from './stamps/inputs/Picker'
 import RadioInput from './stamps/inputs/RadioInput'
 import Modal from './stamps/inputs/Modal'
-import {Users, Order, Customer, Device} from './stamps/inputs/data-objects'
+import { Users, Order, Customer, Device } from './stamps/inputs/data-objects'
 import './pollyfills'
 
 let modal
+
 const page = new Page({
     title: 'stampit',
     topLevel: true,
@@ -77,7 +78,13 @@ new Button({
     background: 'white',
     layoutData: {top: [hasCharger, 30], right: 20}
 }).on('select', () => {
-    validForm() ? submitOrder() : noop()
+    if( validForm() ) {
+        preventBackNavigation()
+        initializeModal()
+
+        const order = createOrder()
+        submitOrder(order)
+    }
 }).appendTo(scroll)
 
 new Button({
@@ -91,18 +98,38 @@ function clearForm() {
     scrollInputs.forEach(input => input.clear())
 }
 
+function initializeModal() {
+    modal = Modal({
+        parent: page,
+        layoutData: {top: 0, bottom: 0, left: 0, right: 0}
+    })
+}
+
 function submitOrder() {
+
+    fetch('http://www.mocky.io/v2/58b4ed3d1000004508ea5575')
+    .then(response => {
+        if (response.ok) {
+            modal.showSuccess()
+            clearForm()
+        }
+    })
+    .catch(error => {
+        console.log(error)
+        modal.showError()
+    })
+
+    // mock server successful response
+    // setTimeout(() => {
+    //     modal.showSuccess()
+    //     clearForm()
+    // }, 1000)
+}
+
+function preventBackNavigation() {
     tabris.app.on('backnavigation' , (app, event) => {
         event.preventDefault()
     })
-
-    modal = Modal({
-        layoutData: {top: 0, bottom: 0, left: 0, right: 0}
-    }).appendTo(page)
-
-    modal.show()
-
-    modal.on('ready', createOrder)
 }
 
 function validForm() {
@@ -116,8 +143,8 @@ function validForm() {
     return false
 }
 
-function createOrder () {
-    new Order({
+function createOrder() {
+    return new Order({
       status: 'Order Placed',
       store: 'iii',
       diagnostic: diagnosticFees.getInput(),
@@ -135,9 +162,6 @@ function createOrder () {
         objectId: 'kkkk'
       })
     })
-
-    modal.showSuccess()
-    clearForm()
 }
 
 function noop() {}

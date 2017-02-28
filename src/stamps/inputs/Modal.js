@@ -5,6 +5,8 @@ import BaseContainer from '../BaseContainer'
 import anime from 'animator'
 
 const Modal = init(function({test}) {
+    this.responseReceived = false
+
     this.overlay = new Composite({
         layoutData: { top: 0, bottom: 0, left: 0, right: 0 },
         background: '#000',
@@ -17,6 +19,8 @@ const Modal = init(function({test}) {
       cornerRadius: 5,
       background: '#fff'
     }).appendTo(this)
+
+    this.show()
 
 }).methods({
     show() {
@@ -39,26 +43,33 @@ const Modal = init(function({test}) {
                 this.progresComposite.set({transform})
             },
             complete: () => {
+                if (this.responseReceived) return
                 this.showActivityIndicator()
             }
         })
     },
     showActivityIndicator() {
-        new ActivityIndicator({
+        this.activityIndicator = new ActivityIndicator({
             id: 'indicator',
             centerX: 0,
             centerY: 0
         }).appendTo(this.progresComposite)
-
-        setTimeout(() => {
-            this.trigger('ready')
-        }, 2000)
     },
     showSuccess() {
-        tabris.app.off('backnavigation')
-        
-        this.closeButton = new TextView({
-            text: 'Close',
+        this.hideActivityIndicator()
+        this.createUIElements('success')
+    },
+    showError() {
+        this.hideActivityIndicator()
+        this.createUIElements('error')
+    },
+    createUIElements(type) {
+        let text = 'Close'
+
+        if(type === 'error') text = 'Retry'
+
+        const button = new TextView({
+            text,
             alignment: 'center',
             textColor: '#fff',
             layoutData: {right: 0, left: 0, bottom: 0},
@@ -73,8 +84,8 @@ const Modal = init(function({test}) {
             this.dispose()
         }).appendTo(this.progresComposite)
 
-        this.image = new ImageView({
-            image: {src: 'images/check.png', scale: 3},
+        const image = new ImageView({
+            image: {src: `images/${type}.png`, scale: 3},
             top: 39,
             height: 72,
             width: 72,
@@ -84,9 +95,7 @@ const Modal = init(function({test}) {
             },
         }).appendTo(this.progresComposite)
 
-        this.find('#indicator').first().dispose()
-
-        this.closeButton.animate({
+        button.animate({
           transform: {
             translationY: 0
           }
@@ -94,13 +103,18 @@ const Modal = init(function({test}) {
           duration: 100,
         })
 
-        this.image.animate({
+        image.animate({
           transform: {
             translationY: 0
           }
         }, {
           duration: 100,
         })
+    },
+    hideActivityIndicator() {
+        this.responseReceived = true
+        tabris.app.off('backnavigation')
+        if (this.activityIndicator) this.activityIndicator.dispose()
     }
 })
 

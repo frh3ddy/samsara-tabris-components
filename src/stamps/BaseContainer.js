@@ -7,7 +7,7 @@ const ContentContainer = composers(({ stamp }) => {
   Object.setPrototypeOf(stamp.compose.methods, Composite.prototype);
 })
 
-const ContainerInit = init( function ({layoutData, background}) {
+const ContainerInit = init( function ({layoutData, background, parent}) {
     //tabris widget class constructor
     this.constructor()
 
@@ -17,6 +17,7 @@ const ContainerInit = init( function ({layoutData, background}) {
     this.set('layoutData', this.layoutData)
     this.set('background', this.background)
 
+    if(parent) this.appendTo(parent)
 }).props({
     layoutData: {left: 0, right: 0, top: 'prev()'},
     background: 'initial'
@@ -55,7 +56,7 @@ const Borders = init(function({border}) {
             //     background: color
             // }).appendTo(this)
         })
-        
+
         return this
     }
 })
