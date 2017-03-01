@@ -78,13 +78,16 @@ new Button({
     background: 'white',
     layoutData: {top: [hasCharger, 30], right: 20}
 }).on('select', () => {
-    if( validForm() ) {
+    if( isFormValid() ) {
         preventBackNavigation()
         initializeModal()
 
         const order = createOrder()
         submitOrder(order)
+        return
     }
+
+    window.plugins.toast.showShortTop('Complete all fields')
 }).appendTo(scroll)
 
 new Button({
@@ -105,12 +108,40 @@ function initializeModal() {
     })
 }
 
-function submitOrder() {
+function submitOrder(order) {
+    // Backendless.Persistence.of(Order).save(order)
+    // .then(response => {
+    //     modal.showSuccess()
+    //     clearForm()
+    //
+    //     let db = app.db.orders
+    //     db.insert(response)
+    //
+    //     let collection = app.orderCollection
+    //
+    //     if (collection) {
+    //       let collectionLenght =  collection.get('items').length
+    //       collection.insert([response], collectionLenght)
+    //       collection.reveal(collectionLenght)
+    //     }
+    //
+    //     let publish = {
+    //     type: 'new order',
+    //     publisher: app.currentUser,
+    //     orderId: response.objectId
+    //     }
+    //
+    //     Backendless.Messaging.publish("amboy_store", JSON.stringify(publish), null, null)
+    // })
+    // .catch(error => {
+    //     console.log(error)
+    //     modal.showError()
+    // })
 
     fetch('http://www.mocky.io/v2/58b4ed3d1000004508ea5575')
     .then(response => {
         if (response.ok) {
-            modal.showSuccess()
+            modal.showError()
             clearForm()
         }
     })
@@ -118,12 +149,6 @@ function submitOrder() {
         console.log(error)
         modal.showError()
     })
-
-    // mock server successful response
-    // setTimeout(() => {
-    //     modal.showSuccess()
-    //     clearForm()
-    // }, 1000)
 }
 
 function preventBackNavigation() {
@@ -132,7 +157,7 @@ function preventBackNavigation() {
     })
 }
 
-function validForm() {
+function isFormValid() {
     const allValid = scrollInputs.filter(input => {
         input.validate()
         return input.isValid === true

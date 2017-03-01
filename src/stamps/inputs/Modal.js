@@ -65,8 +65,12 @@ const Modal = init(function({test}) {
     },
     createUIElements(type) {
         let text = 'Close'
+        let background = '#3ac569'
 
-        if(type === 'error') text = 'Retry'
+        if(type === 'error') {
+            text = 'Retry'
+            background = '#ff3a2f'
+        }
 
         const button = new TextView({
             text,
@@ -78,7 +82,7 @@ const Modal = init(function({test}) {
               translationY: 50
             },
             height: 50,
-            background: '#3ac569'
+            background
         }).on('tap', () => {
             ui.set('toolbarVisible', true)
             this.dispose()
