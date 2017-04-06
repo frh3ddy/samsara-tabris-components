@@ -5,20 +5,10 @@ const { View, Transitionable, Transform } = Core
 const { GridLayout } = Layouts
 
 import Item from './item'
-import app from 'ampersand-app'
 const SPACING = 5
-const HEIGHT = 50
-
-const repairTypeList = [
-    'LCD',
-    'Motherboard',
-    'Battery',
-    'DC Port',
-    'Optical Drive',
-]
 
 export default View.extend({
-    initialize() {
+    initialize({cols, data, itemHeight}) {
         const list = []
         const background = new Surface({
             properties: {
@@ -32,9 +22,9 @@ export default View.extend({
 
         this.size.subscribe(container.size)
 
-        repairTypeList.forEach(type => {
+        data.forEach(type => {
             const surface = new Item({
-                size: [undefined, HEIGHT],
+                size: [undefined, itemHeight],
                 name: type
             })
 
@@ -47,12 +37,12 @@ export default View.extend({
             container.push(surface, 1, 0)
             list.push(surface)
         })
-        const cols = 2
-        const fullRows = Math.floor(repairTypeList.length / cols)
-        const rows = Math.ceil(repairTypeList.length / cols)
+
+        const fullRows = Math.floor(data.length / cols)
+        const rows = Math.ceil(data.length / cols)
         const nSpacing = fullRows === rows ? (fullRows - 1) : fullRows
         const colsPerRow = Array.from(Array(fullRows)).map(n => cols)
-        const containerHeight = (HEIGHT * rows) + (SPACING * nSpacing)
+        const containerHeight = (itemHeight * rows) + (SPACING * nSpacing)
 
         container.resize(colsPerRow)
         container.setSize([undefined, containerHeight])
