@@ -9,7 +9,7 @@ const SPACING = 5
 
 export default View.extend({
     initialize({cols, data, itemHeight}) {
-        const list = []
+        this.list = []
         const background = new Surface({
             properties: {
                 background: 'blue'
@@ -29,13 +29,13 @@ export default View.extend({
             })
 
             surface.on('select', selected => {
-                list.forEach(node => {
+                this.list.forEach(node => {
                     if(node !== selected) node.deselect()
                 })
             })
 
             container.push(surface, 1, 0)
-            list.push(surface)
+            this.list.push(surface)
         })
 
         const fullRows = Math.floor(data.length / cols)

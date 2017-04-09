@@ -9,6 +9,7 @@ import Separator from './separator'
 
 export default View.extend({
     initialize({gridProps, headerText}) {
+        this.selection = undefined
         let height = 0
         const border = new Surface({
             properties: {
@@ -40,8 +41,11 @@ export default View.extend({
             })
         })
 
+        const grid = new Grid(gridProps)
+        this.list = grid.list
+
         stack.push(headerTitle)
-        stack.push(new Grid(gridProps))
+        stack.push(grid)
 
         const separator = new Separator({
             size: [undefined, 15]
@@ -59,5 +63,9 @@ export default View.extend({
         this.add(border)
         this.add({align: [0, .5]}).add(background)
         this.add({align: [.5, 0]}).add(stack)
+    },
+    getSelection() {
+        const selection = this.list.find(item => item.selected)
+        if(selection) return selection.name
     }
 })

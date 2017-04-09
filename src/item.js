@@ -10,6 +10,7 @@ const HEIGHT = 50
 
 export default View.extend({
     initialize({name}) {
+        this.name = name
         this.selected = false
         this.background = new Surface({
             properties: {
